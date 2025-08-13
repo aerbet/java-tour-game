@@ -15,26 +15,29 @@ public class Task1 {
     }
 
     public static void tourLaunch() {
-        String[] words = selectCategory();
-        String word = selectWord(words);
-        print(word);
-        getEncodedWord(word);
-        
-        while (checkEncodedWord()) { 
-            char letter = chooseLetter();
+        for (int i = 0; i < tourCount; i++) {
+            String[] words = selectCategory();
+            String word = selectWord(words);
+            print(word);
+            getEncodedWord(word);
+            
+            while (checkEncodedWord()) { 
+                char letter = chooseLetter();
 
-            if (replaceLetter(letter, word)) {
-                print("Letter is not exist.\nTries left: " + tries);
+                if (replaceLetter(letter, word)) {
+                    print("Letter is not exist.\nTries left: " + tries);
+                }
+                if (tries == 0) {
+                    break;
+                }
+                print(Arrays.toString(encodedWord));
             }
-            if (tries == 0) {
-                break;
-            }
-            print(Arrays.toString(encodedWord));
+            
+            print("\nGame Over");
+            print("Word: " + word);
+            print("Points: " + points);
+            tries = 3;
         }
-        
-        print("\nGame Over");
-        print("Word: " + word);
-        print("Points: " + points);
     }
 
     public static boolean checkEncodedWord() {
