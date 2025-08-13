@@ -3,12 +3,38 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Task1 {
-
+    public static Scanner sc = new Scanner(System.in);
     public static Random rnd = new Random();
+    public static String[] categories = {
+        "Animals", 
+        "Cities", 
+        "Fruits", 
+        "Cars", 
+        "Colors", 
+        "Countries", 
+        "Sports", 
+        "ProgrammingLanguages", 
+        "Planets"
+    };
+    public static String[][] categoriesWord = {
+        {"Elephant", "Cat", "Giraffe", "Lion", "Tiger", "Dog", "Bear", "Wolf", "Fox", "Horse"},
+        {"Bishkek", "Karakol", "Moscow", "London", "Paris", "Berlin", "Tokyo", "New York", "Dubai", "Rome"},
+        {"Pineapple", "Mango", "Banana", "Apple", "Orange", "Grapes", "Strawberry", "Cherry", "Watermelon", "Kiwi"},
+        {"Toyota", "BMW", "Mercedes", "Audi", "Honda", "Ford", "Lexus", "Nissan", "Chevrolet", "Volkswagen"},
+        {"Red", "Blue", "Green", "Yellow", "Purple", "Black", "White", "Orange", "Pink", "Brown"},
+        {"Kyrgyzstan", "Russia", "USA", "Japan", "China", "Germany", "France", "Italy", "Brazil", "Canada"},
+        {"Football", "Basketball", "Tennis", "Volleyball", "Hockey", "Swimming", "Baseball", "Boxing", "Cycling", "Skiing"},
+        {"Java", "JavaScript", "Python", "C", "C++", "C#", "Ruby", "PHP", "Swift", "Go"},
+        {"Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Moon"}
+    };
     public static char[] encodedWord;
     public static int points = 0;
+    public static int attemptPoints = 0;
     public static int tries = 3;
     public static int tourCount = 3;
+    public static int gameIndex = 0;
+    public static int[] scores = new int[3];
+    public static int[] attempts = new int[3];
     
     public static void main(String[] args) {
         tourLaunch();
@@ -18,6 +44,7 @@ public class Task1 {
         for (int i = 0; i < tourCount; i++) {
             String[] words = selectCategory();
             String word = selectWord(words);
+            deleteRepeating(words, word);
             print(word);
             getEncodedWord(word);
             
@@ -35,8 +62,58 @@ public class Task1 {
             
             print("\nGame Over");
             print("Word: " + word);
-            print("Points: " + points);
+            print("\nTries left: " + tries);
+            print("Points: " + attemptPoints);
+            countScores(scores);
+            countAttempts(attempts);
+            attemptPoints = 0;
+            gameIndex++;
             tries = 3;
+        }
+
+        int totalScore = 0;
+        for (int i = 0; i < scores.length; i++) {
+            totalScore += scores[i];
+        }
+
+        drawTable(scores, attempts, totalScore);
+    }
+
+    public static void drawTable(int[] scores, int[] attempts, int totalScore) {
+        System.out.printf(
+            "%n---------------- %s ---------------%n" +
+            "    %s   |       %s        | %-8s  %n" +
+            "------------|--------------------|---------- %n" +
+            "    - %d -   | %9d          |     %-4d  %n" +
+            "    - %d -   | %9d          |     %-4d  %n" +
+            "    - %d -   | %9d          |     %-4d  %n" +
+            "------------|--------------------|---------- %n" +
+            "    %-7s |        %-11d |     %-8d%n",
+             "Finish game", "Round", "Score", "Attempts",
+            1, scores[0], attempts[0],        
+            2, scores[1], attempts[1],        
+            3, scores[2], attempts[2],        
+            "Total", totalScore, attempts[2]       
+        );
+    }
+
+    public static int[] countAttempts(int[] attempts) {
+        attempts[gameIndex] = tries;
+        
+        return attempts;
+    }
+
+    public static int[] countScores(int[] scores) {
+        scores[gameIndex] = attemptPoints;
+
+        return scores;
+    }
+
+    public static void deleteRepeating(String [] arr, String word) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i].equals(word)) {
+                arr[i] = "";
+            }
         }
     }
 
@@ -52,21 +129,24 @@ public class Task1 {
     public static boolean replaceLetter(char letter, String word) {
         String str = String.valueOf(letter);
         boolean isCorrect = true;
-        tries--;
+        
         for (int i = 0; i < word.length(); i++) {
             if (str.equalsIgnoreCase(String.valueOf(word.charAt(i)))) {
                 encodedWord[i] = word.charAt(i);
                 isCorrect = false;
                 points++;
-                tries = 3;
+                attemptPoints++;
             }
+        }
+
+        if (isCorrect) {
+            tries--;
         }
 
         return isCorrect;
     }
 
     public static char chooseLetter() {
-        Scanner sc = new Scanner(System.in);
         String str;
 
         while (true) { 
@@ -90,38 +170,23 @@ public class Task1 {
     }
 
     public static String selectWord(String[] arr) {
-        return arr[rnd.nextInt(arr.length)];
+        String word;
+
+        do {
+            word = arr[rnd.nextInt(arr.length)];
+        } while (word.isEmpty());
+
+        return word;
     }
 
     public static String[] selectCategory() {
-        String[] categories = {"Animals", "Cities", "Fruits", "Cars"};
-
-        switch (rnd.nextInt(categories.length)) { 
-            case 0:
-                print("Category: " + categories[0]);
-                return new String[] {"Elephant", "Cat", "Giraffe"};
-            case 1:
-                print("Category: " + categories[1]);
-                return new String[] {"Bishkek", "Karakol", "Moscow"};
-            case 2:
-                print("Category: " + categories[2]);
-                return new String[] {"Pineapple", "Mango", "Banana"};
-            case 3:
-                print("Category: " + categories[3]);
-                return new String[] {"Toyota", "BMW", "Mercedes"};
-            default:
-                throw new AssertionError();
-        }
-
+        int index = rnd.nextInt(categoriesWord.length);
+        print("\nCategory: " + categories[index]);
+        return categoriesWord[index];
     }
 
     public static void print(String str) {
         System.out.println(str);
     }
 
-
-
-
-
-    
 }
