@@ -13,7 +13,7 @@ public class Task1 {
         "Colors", 
         "Countries", 
         "Sports", 
-        "ProgrammingLanguages", 
+        "Programming Languages", 
         "Planets"
     };
     public static String[][] categoriesWord = {
@@ -38,6 +38,29 @@ public class Task1 {
     
     public static void main(String[] args) {
         tourLaunch();
+        reStart();
+    }
+
+    public static void reStart() {
+        while (true) {
+            System.out.println("\nDo you want to play one more time? (Y/N)");
+            String fromUser = sc.nextLine().toLowerCase();
+            switch (fromUser) {
+                case "y":
+                    points = 0;
+                    attemptPoints = 0;
+                    tries = 3;
+                    tourCount = 3;
+                    gameIndex = 0;
+                    tourLaunch();
+                    break;
+                case "n":
+                    System.out.println("\nGood luck, see you next time!");
+                    return; //с break у меня из цикла не выходило, я понял что он внутри свитч работает только.
+                default:
+                    System.out.println("Please enter Y or N.");
+            }
+        }
     }
 
     public static void tourLaunch() {
@@ -45,14 +68,14 @@ public class Task1 {
             String[] words = selectCategory();
             String word = selectWord(words);
             deleteRepeating(words, word);
-            print(word);
             getEncodedWord(word);
+            print(Arrays.toString(encodedWord));
             
             while (checkEncodedWord()) { 
                 char letter = chooseLetter();
 
                 if (replaceLetter(letter, word)) {
-                    print("Letter is not exist.\nTries left: " + tries);
+                    print("Letter is not exist or you already found it.\nTries left: " + tries);
                 }
                 if (tries == 0) {
                     break;
@@ -131,9 +154,10 @@ public class Task1 {
         boolean isCorrect = true;
         
         for (int i = 0; i < word.length(); i++) {
-            if (str.equalsIgnoreCase(String.valueOf(word.charAt(i)))) {
+            if (str.equalsIgnoreCase(String.valueOf(word.charAt(i))) && encodedWord[i] == '*') {
                 encodedWord[i] = word.charAt(i);
                 isCorrect = false;
+                tries = 3;
                 points++;
                 attemptPoints++;
             }
